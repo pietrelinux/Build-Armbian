@@ -236,7 +236,7 @@ then
 fi
 intsize=$(fdisk -s /dev/$emmc)
 #image=$(echo $(cat /proc/cpuinfo | egrep '(Hardware|Revision)' | awk '{print $3}') | sed "s/ /-/g")-emmc.img
-image=BACKUP-EDGE-emmc.img
+image=BACKUP-rk3399-emmc.img
 
 ### BACKUP ONLY CHECKS
 

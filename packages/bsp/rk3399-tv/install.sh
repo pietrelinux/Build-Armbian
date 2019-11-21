@@ -1,20 +1,59 @@
 #!/bin/sh
 
-if grep /dev/mmcblk0 /proc/mounts | grep "boot" ; then
-    PART_BOOT="/dev/mmcblk1p1"
-    PART_ROOT="/dev/mmcblk1p2"
-    DEV_EMMC=/dev/mmcblk1
-else
-    PART_BOOT="/dev/mmcblk0p1"
-    PART_ROOT="/dev/mmcblk0p2"
-    DEV_EMMC=/dev/mmcblk0
+echo "Start script create MBR and filesystem"
+
+hasdrives=$(lsblk | grep -oE '(mmcblk[0-9])' | sort | uniq)
+if [ "$hasdrives" = "" ]
+then
+	echo "UNABLE TO FIND ANY EMMC OR SD DRIVES ON THIS SYSTEM!!! "
+	exit 1
+fi
+avail=$(lsblk | grep -oE '(mmcblk[0-9]|sda[0-9])' | sort | uniq)
+if [ "$avail" = "" ]
+then
+	echo "UNABLE TO FIND ANY DRIVES ON THIS SYSTEM!!!"
+	exit 1
+fi
+runfrom=$(lsblk | grep /$ | grep -oE '(mmcblk[0-9]|sda[0-9])')
+if [ "$runfrom" = "" ]
+then
+	echo " UNABLE TO FIND ROOT OF THE RUNNING SYSTEM!!! "
+	exit 1
+fi
+emmc=$(echo $avail | sed "s/$runfrom//" | sed "s/sd[a-z][0-9]//g" | sed "s/ //g")
+if [ "$emmc" = "" ]
+then
+	echo " UNABLE TO FIND YOUR EMMC DRIVE OR YOU ALREADY RUN FROM EMMC!!!"
+	exit 1
+fi
+if [ "$runfrom" = "$avail" ]
+then
+	echo " YOU ARE RUNNING ALREADY FROM EMMC!!! "
+	exit 1
+fi
+if [ $runfrom = $emmc ]
+then
+	echo " YOU ARE RUNNING ALREADY FROM EMMC!!! "
+	exit 1
+fi
+if [ "$(echo $emmc | grep mmcblk)" = "" ]
+then
+	echo " YOU DO NOT APPEAR TO HAVE AN EMMC DRIVE!!! "
+	exit 1
 fi
 
-#echo $DEV_EMMC
+DEV_EMMC="/dev/$emmc"
+
+echo $DEV_EMMC
 
 echo "Start backup u-boot default"
 
 dd if="${DEV_EMMC}" of=/boot/u-boot-default.img bs=1M count=16
+
+dd if=/dev/zero of="${DEV_EMMC}" bs=512 count=1
+
+dd if=/flash/u-boot-default.img of="${DEV_EMMC}" bs=1 count=442
+dd if=/flash/u-boot-default.img of="${DEV_EMMC}" bs=512 skip=1 seek=1
 
 echo "Start create MBR and partittion"
 
@@ -22,7 +61,7 @@ parted -s "${DEV_EMMC}" mklabel msdos
 parted -s "${DEV_EMMC}" mkpart primary fat32 16M 144M
 parted -s "${DEV_EMMC}" mkpart primary ext4 145M 100%
 
-echo "Start restore u-boot"
+echo "Start update u-boot"
 
 if [ -f /boot/u-boot/uboot.img ] ; then
     dd if=/boot/u-boot/uboot.img of="${DEV_EMMC}" conv=fsync seek=16384
@@ -41,6 +80,8 @@ echo "Start copy system for eMMC."
 mkdir -p /ddbr
 chmod 777 /ddbr
 
+PART_BOOT="${DEV_EMMC}p1"
+PART_ROOT="${DEV_EMMC}p2"
 DIR_INSTALL="/ddbr/install"
 
 if [ -d $DIR_INSTALL ] ; then
@@ -126,6 +167,7 @@ echo "Copy USR"
 tar -cf - usr | (cd $DIR_INSTALL; tar -xpf -)
 echo "Copy VAR"
 tar -cf - var | (cd $DIR_INSTALL; tar -xpf -)
+sync
 
 echo "Copy fstab"
 
@@ -136,7 +178,10 @@ rm $DIR_INSTALL/root/install.sh
 rm $DIR_INSTALL/root/fstab
 rm $DIR_INSTALL/usr/bin/ddbr
 
+
+cd /
 sync
+
 umount $DIR_INSTALL
 
 echo "*******************************************"
