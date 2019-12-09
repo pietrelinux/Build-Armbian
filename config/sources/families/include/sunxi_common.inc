@@ -10,17 +10,25 @@ ASOUND_STATE='asound.state.sunxi-next'
 GOVERNOR=ondemand
 
 case $BRANCH in
-	next|legacy)
+	legacy)
 
 		KERNELBRANCH='branch:linux-4.19.y'
 
 	;;
 
-	dev|current)
+	current)
 
 		KERNELSOURCE="https://github.com/megous/linux"
 		KERNELBRANCH="branch:orange-pi-5.3"
-		KERNELPATCHDIR='sunxi-dev'
+		KERNELPATCHDIR='sunxi-'$BRANCH
+
+	;;
+
+	dev)
+
+		KERNELSOURCE="https://github.com/megous/linux"
+		KERNELBRANCH="branch:orange-pi-5.4"
+		KERNELPATCHDIR='sunxi-'$BRANCH
 
 	;;
 esac

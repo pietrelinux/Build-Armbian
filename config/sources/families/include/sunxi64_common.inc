@@ -14,10 +14,18 @@ case $BRANCH in
 
 	;;
 
-	dev|current)
+	current)
 
 		KERNELSOURCE="https://github.com/megous/linux"
 		KERNELBRANCH="branch:orange-pi-5.3"
+		KERNELPATCHDIR='sunxi-'$BRANCH
+
+	;;
+
+	dev)
+
+		KERNELSOURCE="https://github.com/megous/linux"
+		KERNELBRANCH="branch:orange-pi-5.4"
 		KERNELPATCHDIR='sunxi-'$BRANCH
 
 	;;

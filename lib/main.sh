@@ -102,30 +102,27 @@ else
 
 fi
 
-# Check and install dependencies, directory structure and settings
-prepare_host
-
 if [[ -n $REPOSITORY_UPDATE ]]; then
 
-	# select stable/beta configuration
-	if [[ $BETA == yes ]]; then
-		DEB_STORAGE=$DEST/debs-beta
-		REPO_STORAGE=$DEST/repository-beta
-		REPO_CONFIG="aptly-beta.conf"
-	else
-		DEB_STORAGE=$DEST/debs
-		REPO_STORAGE=$DEST/repository
-		REPO_CONFIG="aptly.conf"
-	fi
+        # select stable/beta configuration
+        if [[ $BETA == yes ]]; then
+                DEB_STORAGE=$DEST/debs-beta
+                REPO_STORAGE=$DEST/repository-beta
+                REPO_CONFIG="aptly-beta.conf"
+        else
+                DEB_STORAGE=$DEST/debs
+                REPO_STORAGE=$DEST/repository
+                REPO_CONFIG="aptly.conf"
+        fi
 
-	# For user override
-	if [[ -f $USERPATCHES_PATH/lib.config ]]; then
-		display_alert "Using user configuration override" "userpatches/lib.config" "info"
-	        source "$USERPATCHES_PATH"/lib.config
-	fi
+        # For user override
+        if [[ -f $USERPATCHES_PATH/lib.config ]]; then
+                display_alert "Using user configuration override" "userpatches/lib.config" "info"
+            source "$USERPATCHES_PATH"/lib.config
+        fi
 
-	repo-manipulate "$REPOSITORY_UPDATE"
-	exit
+        repo-manipulate "$REPOSITORY_UPDATE"
+        exit
 
 fi
 
@@ -356,30 +353,6 @@ else
 
 fi
 
-start=$(date +%s)
-
-[[ $CLEAN_LEVEL == *sources* ]] && cleaning "sources"
-
-# ignore updates help on building all images - for internal purposes
-# fetch_from_repo <url> <dir> <ref> <subdir_flag>
-if [[ $IGNORE_UPDATES != yes ]]; then
-	display_alert "Downloading sources" "" "info"
-	if [[ $ADD_UBOOT == yes ]]; then
-		fetch_from_repo "$BOOTSOURCE" "$BOOTDIR" "$BOOTBRANCH" "yes"
-	fi
-	fetch_from_repo "$KERNELSOURCE" "$KERNELDIR" "$KERNELBRANCH" "yes"
-	if [[ -n $ATFSOURCE ]]; then
-		fetch_from_repo "$ATFSOURCE" "$ATFDIR" "$ATFBRANCH" "yes"
-	fi
-	fetch_from_repo "https://github.com/linux-sunxi/sunxi-tools" "sunxi-tools" "branch:master"
-	fetch_from_repo "https://github.com/armbian/rkbin" "rkbin-tools" "branch:master"
-	fetch_from_repo "https://github.com/MarvellEmbeddedProcessors/A3700-utils-marvell" "marvell-tools" "branch:A3700_utils-armada-18.12"
-	fetch_from_repo "https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell.git" "marvell-ddr" "branch:mv_ddr-armada-18.12"
-	fetch_from_repo "https://github.com/MarvellEmbeddedProcessors/binaries-marvell" "marvell-binaries" "branch:binaries-marvell-armada-18.12"
-	fetch_from_repo "https://github.com/armbian/odroidc2-blobs" "odroidc2-blobs" "branch:master"
-	fetch_from_repo "https://github.com/armbian/testings" "testing-reports" "branch:master"
-fi
-
 if [[ $BETA == yes ]]; then
 	IMAGE_TYPE=nightly
 elif [[ $BETA != "yes" && $BUILD_ALL == yes && -n $GPG_PASS ]]; then
@@ -387,9 +360,6 @@ elif [[ $BETA != "yes" && $BUILD_ALL == yes && -n $GPG_PASS ]]; then
 else
 	IMAGE_TYPE=user-built
 fi
-
-compile_sunxi_tools
-install_rkbin_tools
 
 branch2dir() {
 	[[ $1 == head ]] && echo HEAD || echo ${1##*:}
@@ -408,6 +378,36 @@ CHOSEN_KERNEL=linux-image-${DEB_BRANCH}${LINUXFAMILY}
 CHOSEN_ROOTFS=linux-${RELEASE}-root-${DEB_BRANCH}${BOARD}
 CHOSEN_DESKTOP=armbian-${RELEASE}-desktop
 CHOSEN_KSRC=linux-source-${BRANCH}-${LINUXFAMILY}
+
+do_default() {
+
+start=$(date +%s)
+
+# Check and install dependencies, directory structure and settings
+prepare_host
+
+[[ $CLEAN_LEVEL == *sources* ]] && cleaning "sources"
+
+# ignore updates help on building all images - for internal purposes
+# fetch_from_repo <url> <dir> <ref> <subdir_flag>
+if [[ $IGNORE_UPDATES != yes ]]; then
+	display_alert "Downloading sources" "" "info"
+	fetch_from_repo "$BOOTSOURCE" "$BOOTDIR" "$BOOTBRANCH" "yes"
+	fetch_from_repo "$KERNELSOURCE" "$KERNELDIR" "$KERNELBRANCH" "yes"
+	if [[ -n $ATFSOURCE ]]; then
+		fetch_from_repo "$ATFSOURCE" "$ATFDIR" "$ATFBRANCH" "yes"
+	fi
+	fetch_from_repo "https://github.com/linux-sunxi/sunxi-tools" "sunxi-tools" "branch:master"
+	fetch_from_repo "https://github.com/armbian/rkbin" "rkbin-tools" "branch:master"
+	fetch_from_repo "https://github.com/MarvellEmbeddedProcessors/A3700-utils-marvell" "marvell-tools" "branch:A3700_utils-armada-18.12"
+	fetch_from_repo "https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell.git" "marvell-ddr" "branch:mv_ddr-armada-18.12"
+	fetch_from_repo "https://github.com/MarvellEmbeddedProcessors/binaries-marvell" "marvell-binaries" "branch:binaries-marvell-armada-18.12"
+	fetch_from_repo "https://github.com/armbian/odroidc2-blobs" "odroidc2-blobs" "branch:master"
+	fetch_from_repo "https://github.com/armbian/testings" "testing-reports" "branch:master"
+fi
+
+compile_sunxi_tools
+install_rkbin_tools
 
 for option in $(tr ',' ' ' <<< "$CLEAN_LEVEL"); do
 	[[ $option != sources ]] && cleaning "$option"
@@ -482,3 +482,11 @@ $([[ -n $KERNEL_ONLY ]] && echo "KERNEL_ONLY=${KERNEL_ONLY} ")\
 $([[ -n $KERNEL_CONFIGURE ]] && echo "KERNEL_CONFIGURE=${KERNEL_CONFIGURE} ")\
 $([[ -n $COMPRESS_OUTPUTIMAGE ]] && echo "COMPRESS_OUTPUTIMAGE=${COMPRESS_OUTPUTIMAGE} ")\
 " "info"
+
+} # end of do_default()
+
+if [[ -z $1 ]]; then
+	do_default
+else
+	eval "$@"
+fi

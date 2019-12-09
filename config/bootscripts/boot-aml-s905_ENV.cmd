@@ -1,5 +1,7 @@
 if fatload mmc 0 0x11000000 boot_android; then if test ${ab} = 0; then setenv ab 1; saveenv; exit; else setenv ab 0; saveenv; fi; fi;
 if fatload usb 0 0x11000000 boot_android; then if test ${ab} = 0; then setenv ab 1; saveenv; exit; else setenv ab 0; saveenv; fi; fi;
+if fatload mmc 0 0x1000000 u-boot.ext; then go 0x1000000; fi;
+if fatload usb 0 0x1000000 u-boot.ext; then go 0x1000000; fi;
 setenv env_addr 0x10400000
 setenv kernel_addr 0x11000000
 setenv initrd_addr 0x13000000

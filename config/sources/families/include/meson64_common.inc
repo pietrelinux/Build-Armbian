@@ -1,10 +1,8 @@
-BOOTBRANCH='tag:v2019.07'
 UBOOT_TARGET_MAP="u-boot-dtb.img;;u-boot.bin.sd.bin:u-boot.bin u-boot-dtb.img"
 BOOTSCRIPT="boot-meson64.cmd:boot.cmd"
 BOOTENV_FILE='meson64-next.txt'
 LINUXFAMILY=meson64
 ARCH=arm64
-BOOTBRANCH='tag:v2019.10'
 SERIALCON=ttyAML0
 SRC_LOADADDR='LOADADDR=0x1080000'
 OVERLAY_PREFIX='meson'
@@ -19,6 +17,16 @@ fi
 CPUMIN=500000
 CPUMAX=1536000
 GOVERNOR=conservative
+
+case $BRANCH in
+        dev)
+
+		KERNELBRANCH='branch:linux-5.4.y'
+		KERNELPATCHDIR='meson64-'$BRANCH
+
+        ;;
+esac
+
 
 # this helper function includes postprocess for p212 and its variants.
 # $1 PATH for uboot blob repo
