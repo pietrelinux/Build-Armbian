@@ -1,11 +1,12 @@
 #!/bin/sh
 
-echo "Start script create MBR and filesystem"
+echo "Bienvenido a la instalación de Linux en la memoría interna"
+sleep 2
 
 hasdrives=$(lsblk | grep -oE '(mmcblk[0-9])' | sort | uniq)
 if [ "$hasdrives" = "" ]
 then
-	echo "UNABLE TO FIND ANY EMMC OR SD DRIVES ON THIS SYSTEM!!! "
+	echo "NO SE PUEDE ENCONTRAR NINGUNA UNIDAD EMMC O SD EN ESTE SISTEMA!!! "
 	exit 1
 fi
 avail=$(lsblk | grep -oE '(mmcblk[0-9]|sda[0-9])' | sort | uniq)
@@ -17,7 +18,7 @@ fi
 runfrom=$(lsblk | grep /$ | grep -oE '(mmcblk[0-9]|sda[0-9])')
 if [ "$runfrom" = "" ]
 then
-	echo " UNABLE TO FIND ROOT OF THE RUNNING SYSTEM!!! "
+	echo "NO SE PUEDE ENCONTRAR LA RAÍZ DEL SISTEMA EN EJECUCIÓN!!! "
 	exit 1
 fi
 emmc=$(echo $avail | sed "s/$runfrom//" | sed "s/sd[a-z][0-9]//g" | sed "s/ //g")
