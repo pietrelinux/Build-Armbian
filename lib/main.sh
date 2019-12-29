@@ -14,7 +14,7 @@
 
 if [[ $(basename "$0") == main.sh ]]; then
 
-	echo "Please use compile.sh to start the build process"
+	echo "Por favor ejecuta compile.sh para iniciar el proceso de compilación"
 	exit 255
 
 fi
@@ -36,7 +36,7 @@ if [[ $BUILD_ALL != "yes" ]]; then
 fi
 
 # We'll use this title on all menus
-backtitle="Armbian building script, http://www.armbian.com | Author: Igor Pecovnik"
+backtitle="Armbian for Amlogic, http://www.armbian.com | Author: Igor Pecovnik"
 
 # if language not set, set to english
 [[ -z $LANGUAGE ]] && export LANGUAGE="en_US:en"
@@ -130,23 +130,23 @@ fi
 
 if [[ -z $KERNEL_ONLY ]]; then
 
-	options+=("yes" "U-boot and kernel packages")
-	options+=("no" "Full OS image for flashing")
+	options+=("yes" "Paquetes U-boot y kernel ")
+	options+=("no" "Imagen completa del sistema para instalar")
 	KERNEL_ONLY=$(dialog --stdout --title "Choose an option" --backtitle "$backtitle" --no-tags \
-	--menu "Select what to build" $TTY_Y $TTY_X $((TTY_Y - 8)) "${options[@]}")
+	--menu "Selecciona que vas a compilar" $TTY_Y $TTY_X $((TTY_Y - 8)) "${options[@]}")
 	unset options
-	[[ -z $KERNEL_ONLY ]] && exit_with_error "No option selected"
+	[[ -z $KERNEL_ONLY ]] && exit_with_error "No has seleccionado ninguna opción"
 
 fi
 
 if [[ -z $KERNEL_CONFIGURE ]]; then
 
-	options+=("no" "Do not change the kernel configuration")
-	options+=("yes" "Show a kernel configuration menu before compilation")
+	options+=("no" "No cambiar la configuracin del kernel")
+	options+=("yes" "Mostrar la configuración del kernel antes de compilar")
 	KERNEL_CONFIGURE=$(dialog --stdout --title "Choose an option" --backtitle "$backtitle" --no-tags \
-	--menu "Select the kernel configuration" $TTY_Y $TTY_X $((TTY_Y - 8)) "${options[@]}")
+	--menu "Selecciona la configuración del kernel" $TTY_Y $TTY_X $((TTY_Y - 8)) "${options[@]}")
 	unset options
-	[[ -z $KERNEL_CONFIGURE ]] && exit_with_error "No option selected"
+	[[ -z $KERNEL_CONFIGURE ]] && exit_with_error "No has seleccionado ninguna opción"
 
 fi
 
