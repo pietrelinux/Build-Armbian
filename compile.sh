@@ -16,7 +16,7 @@
 SRC="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
 # check for whitespace in $SRC and exit for safety reasons
-grep -q "[[:space:]]" <<<"${SRC}" && { echo "\"${SRC}\" contains whitespace. Not supported. Aborting." >&2 ; exit 1 ; }
+grep -q "[[:space:]]" <<<"${SRC}" && { echo "\"${SRC}\" contiene espacios en blanco. No soportado. Abortar." >&2 ; exit 1 ; }
 
 cd "${SRC}" || exit
 
@@ -24,7 +24,7 @@ if [[ -f "${SRC}"/lib/general.sh ]]; then
 	# shellcheck source=lib/general.sh
 	source "${SRC}"/lib/general.sh
 else
-	echo "Error: missing build directory structure"
+	echo "Error: falta estructura de directorio de compilación"
 	echo "Please clone the full repository https://github.com/armbian/build/"
 	exit 255
 fi
