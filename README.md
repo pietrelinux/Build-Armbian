@@ -1,13 +1,15 @@
-# Armbian #
+# Armbian pàra Amlogic #
 
-Debian based Linux for ARM based single-board computers
-  
+Creacion de imagenes Armbian para placas basadas en Arm64 /Amlogic
+
+Fork Original:
+
 [https://www.armbian.com](https://www.armbian.com "Armbian")
 
 
-# How to build an image or a kernel?
+# ¿Cómo construir una imagen o un kernel?
 
-Supported build environment is **Ubuntu Bionic 18.04 x64** ([minimal iso image](http://archive.ubuntu.com/ubuntu/dists/bionic/main/installer-amd64/current/images/netboot/mini.iso)).
+El entorno de desarollo soportado es  **Ubuntu Bionic 18.04 x64** ([minimal iso image](http://archive.ubuntu.com/ubuntu/dists/bionic/main/installer-amd64/current/images/netboot/mini.iso)).
 
 - guest inside a [VirtualBox](https://www.virtualbox.org/wiki/Downloads) or other virtualization software,
 - guest managed by [Vagrant](https://docs.armbian.com/Developer-Guide_Using-Vagrant/). This uses Virtualbox (as above) but does so in an easily repeatable way,
