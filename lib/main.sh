@@ -154,7 +154,7 @@ if [[ -z $BOARD ]]; then
 
 	WIP_STATE=supported
 	WIP_BUTTON='CSC/WIP/EOS/TVB'
-	STATE_DESCRIPTION=' - boards with high level of software maturity'
+	STATE_DESCRIPTION=' - placas con alta madurez de software'
 	temp_rc=$(mktemp)
 
 	while true; do
@@ -194,7 +194,7 @@ if [[ -z $BOARD ]]; then
 		else
 			echo > "${temp_rc}"
 		fi
-		BOARD=$(DIALOGRC=$temp_rc dialog --stdout --title "Choose a board" --backtitle "$backtitle" --scrollbar \
+		BOARD=$(DIALOGRC=$temp_rc dialog --stdout --title "Selecciona una plataforma" --backtitle "$backtitle" --scrollbar \
 			--colors --extra-label "Show $WIP_BUTTON" --extra-button \
 			--menu "Select the target board. Displaying:\n$STATE_DESCRIPTION" $TTY_Y $TTY_X $((TTY_Y - 8)) "${options[@]}")
 		STATUS=$?
@@ -210,7 +210,7 @@ if [[ -z $BOARD ]]; then
 
 			else
 
-				STATE_DESCRIPTION=' - boards with high level of software maturity'
+				STATE_DESCRIPTION=' - placas con alta madurez de software'
 				WIP_STATE=supported
 				WIP_BUTTON='CSC/WIP/EOS'
 				EXPERT=no
@@ -221,7 +221,7 @@ if [[ -z $BOARD ]]; then
 			break
 		fi
 		unset options
-		[[ -z $BOARD ]] && exit_with_error "No board selected"
+		[[ -z $BOARD ]] && exit_with_error "NO has seleccionado ninguna plataforma"
 	done
 fi
 
@@ -241,7 +241,7 @@ fi
 source "${SRC}/config/boards/${BOARD}.${BOARD_TYPE}"
 LINUXFAMILY="${BOARDFAMILY}"
 
-[[ -z $KERNEL_TARGET ]] && exit_with_error "Board configuration does not define valid kernel config"
+[[ -z $KERNEL_TARGET ]] && exit_with_error " No hay definida una configuración de kernel válida"
 
 if [[ -z $BRANCH ]]; then
 
@@ -296,9 +296,9 @@ if [[ $KERNEL_ONLY != yes && -z $RELEASE ]]; then
 		distro_menu "disco"
 		distro_menu "eoan"
 
-		RELEASE=$(dialog --stdout --title "Choose a release" --backtitle "$backtitle" \
-		--menu "Select the target OS release package base" $TTY_Y $TTY_X $((TTY_Y - 8)) "${options[@]}")
-		[[ -z $RELEASE ]] && exit_with_error "No release selected"
+		RELEASE=$(dialog --stdout --title "Elige una versión" --backtitle "$backtitle" \
+		--menu "Selecciona una versión de sistema operativo" $TTY_Y $TTY_X $((TTY_Y - 8)) "${options[@]}")
+		[[ -z $RELEASE ]] && exit_with_error "No has seleccionado ninguna versión"
 
 fi
 
@@ -312,12 +312,12 @@ unset options
 if [[ $KERNEL_ONLY != yes && -z $BUILD_DESKTOP ]]; then
 
 	options=()
-	options+=("no" "Image with console interface (server)")
-	options+=("yes" "Image with desktop environment")
-	BUILD_DESKTOP=$(dialog --stdout --title "Choose image type" --backtitle "$backtitle" --no-tags \
-	--menu "Select the target image type" $TTY_Y $TTY_X $((TTY_Y - 8)) "${options[@]}")
+	options+=("no" "Imagen con consola (server)")
+	options+=("yes" "Imagen con entorno de  escritorio")
+	BUILD_DESKTOP=$(dialog --stdout --title "Elige el tipo de imagen" --backtitle "$backtitle" --no-tags \
+	--menu "Seleccion de tipo de imagen" $TTY_Y $TTY_X $((TTY_Y - 8)) "${options[@]}")
 	unset options
-	[[ -z $BUILD_DESKTOP ]] && exit_with_error "No option selected"
+	[[ -z $BUILD_DESKTOP ]] && exit_with_error "No has seleccionado ninguna opción"
 	[[ $BUILD_DESKTOP == yes ]] && BUILD_MINIMAL=no
 
 fi
