@@ -202,15 +202,15 @@ if [[ -z $BOARD ]]; then
 			if [[ $WIP_STATE == supported ]]; then
 
 				[[ $SHOW_WARNING == yes ]] && show_developer_warning
-				STATE_DESCRIPTION=' - \Z1(CSC)\Zn - Community Supported Configuration\n - \Z1(WIP)\Zn - Work In Progress 
-				\n - \Z1(EOS)\Zn - End Of Support\n - \Z1(TVB)\Zn - TV boxes'
+				STATE_DESCRIPTION=' - \Z1(CSC)\Zn - Configuración admitida por la comunidad\n - \Z1(WIP)\Zn - Trabajo en progreso 
+				\n - \Z1(EOS)\Zn - Fin del soporte\n - \Z1(TVB)\Zn - TV boxes'
 				WIP_STATE=unsupported
 				WIP_BUTTON='matured'
 				EXPERT=yes
 
 			else
 
-				STATE_DESCRIPTION=' - placas con alta madurez de software'
+				STATE_DESCRIPTION=' - Placas con alta madurez de software'
 				WIP_STATE=supported
 				WIP_BUTTON='CSC/WIP/EOS'
 				EXPERT=no
@@ -246,15 +246,15 @@ LINUXFAMILY="${BOARDFAMILY}"
 if [[ -z $BRANCH ]]; then
 
 	options=()
-	[[ $KERNEL_TARGET == *legacy* ]] && options+=("legacy" "Old stable / Legacy")
-	[[ $KERNEL_TARGET == *current* ]] && options+=("current" "Recommended. Come with best support")
+	[[ $KERNEL_TARGET == *legacy* ]] && options+=("legacy" "Versión antigua, en deshuso")
+	[[ $KERNEL_TARGET == *current* ]] && options+=("current" "Recomendada, con mejor soporte")
 	[[ $KERNEL_TARGET == *dev* && $EXPERT = yes ]] && options+=("dev" "\Z1Development version (@kernel.org)\Zn")
 
 	# do not display selection dialog if only one kernel branch is available
 	if [[ "${#options[@]}" == 2 ]]; then
 		BRANCH="${options[0]}"
 	else
-		BRANCH=$(dialog --stdout --title "Choose a kernel" --backtitle "$backtitle" --colors \
+		BRANCH=$(dialog --stdout --title "Elije un kernel" --backtitle "$backtitle" --colors \
 			--menu "Select the target kernel branch\nExact kernel versions depend on selected board" \
 			$TTY_Y $TTY_X $((TTY_Y - 8)) "${options[@]}")
 	fi
@@ -325,8 +325,8 @@ fi
 if [[ $KERNEL_ONLY != yes && $BUILD_DESKTOP == no && -z $BUILD_MINIMAL ]]; then
 
 	options=()
-	options+=("no" "Standard image with console interface")
-	options+=("yes" "Minimal image with console interface")
+	options+=("no" "Imagen estandar con interface de terminal")
+	options+=("yes" "Imagen minima con interface de terminal")
 	BUILD_MINIMAL=$(dialog --stdout --title "Choose image type" --backtitle "$backtitle" --no-tags \
 	--menu "Select the target image type" $TTY_Y $TTY_X $((TTY_Y - 8)) "${options[@]}")
 	unset options
@@ -391,7 +391,7 @@ prepare_host
 # ignore updates help on building all images - for internal purposes
 # fetch_from_repo <url> <dir> <ref> <subdir_flag>
 if [[ $IGNORE_UPDATES != yes ]]; then
-	display_alert "Downloading sources" "" "info"
+	display_alert "Descargando código fuente" "" "info"
 	fetch_from_repo "$BOOTSOURCE" "$BOOTDIR" "$BOOTBRANCH" "yes"
 	fetch_from_repo "$KERNELSOURCE" "$KERNELDIR" "$KERNELBRANCH" "yes"
 	if [[ -n $ATFSOURCE ]]; then
